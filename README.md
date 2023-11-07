@@ -1,2 +1,2 @@
 # Shoot-Em-Up
-Shoot 'em up with Raylib in Zig programming language
+Simple demo of Shoot 'Em Up with Raylib in Zig programming language
