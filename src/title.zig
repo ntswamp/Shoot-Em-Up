@@ -34,7 +34,7 @@ pub fn Update() void {
     if (titleAlpha >= 1.0) titleAlpha = 1.0;
 
     // Press enter to change to ATTIC screen
-    if (r.IsKeyPressed(r.KEY_ENTER) or r.IsMouseButtonPressed(r.MOUSE_LEFT_BUTTON)) {
+    if (r.IsKeyPressed(r.KEY_SPACE) or r.IsKeyPressed(r.KEY_ENTER) or r.IsMouseButtonPressed(r.MOUSE_LEFT_BUTTON)) {
         r.PlaySound(fxStart);
         finishScreen = true;
     }
@@ -60,7 +60,7 @@ pub fn Draw() void {
         .x = 230,
         .y = 340,
     };
-    if (framesCounter > 180 and @mod(@divTrunc(framesCounter, 40), 2) == 1) r.DrawTextEx(gl.Font, "HIT SPACE TO SHOOT 'EM ALL UP", v2, @floatFromInt(gl.Font.baseSize), -2, r.WHITE);
+    if (framesCounter > 180 and @mod(@divTrunc(framesCounter, 40), 2) == 1) r.DrawTextEx(gl.Font, "HIT SPACE TO SHOOT 'EM UP", v2, @floatFromInt(gl.Font.baseSize), -2, r.WHITE);
 }
 
 // Title Screen Unload logic

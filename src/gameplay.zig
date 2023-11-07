@@ -23,7 +23,7 @@ const Enemy = struct {
     active: bool,
 };
 
-const Shoot = struct {
+const Weapon = struct {
     rec: r.Rectangle,
     speed: r.Vector2,
     color: r.Color,
@@ -39,7 +39,7 @@ var score: c_int = 0;
 var win = false;
 var player: Player = undefined;
 var enemy: [gl.ENEMIES_CAP]Enemy = undefined;
-var shoot: [gl.NUM_SHOOTS]Shoot = undefined;
+var weapon: [gl.NUM_SHOOTS]Weapon = undefined;
 var wave: EnemyWave = undefined;
 var shootRate: c_int = 0;
 var alpha: f32 = 0.0;
@@ -104,34 +104,34 @@ pub fn Init() void {
     // Initialize player
     player.rec.x = 20;
     player.rec.y = 50;
-    player.rec.width = 20;
-    player.rec.height = 20;
-    player.speed.x = 5;
-    player.speed.y = 5;
-    player.color = r.BLACK;
+    player.rec.width = 40;
+    player.rec.height = 40;
+    player.speed.x = 7;
+    player.speed.y = 7;
+    player.color = r.GREEN;
 
     // Initialize enemies
     for (0..gl.ENEMIES_CAP) |i| {
-        enemy[i].rec.width = 10;
-        enemy[i].rec.height = 10;
+        enemy[i].rec.width = 20;
+        enemy[i].rec.height = 20;
         enemy[i].rec.x = @as(f32, @floatFromInt(r.GetRandomValue(gl.SCR_WIDTH, gl.SCR_WIDTH + 1000)));
         enemy[i].rec.y = @as(f32, @floatFromInt(r.GetRandomValue(0, gl.SCR_HEIGHT - @as(c_int, @intFromFloat(enemy[i].rec.height)))));
-        enemy[i].speed.x = 5;
-        enemy[i].speed.y = 5;
+        enemy[i].speed.x = 7;
+        enemy[i].speed.y = 7;
         enemy[i].active = true;
-        enemy[i].color = r.GRAY;
+        enemy[i].color = r.GOLD;
     }
 
     // Initialize shoots
     for (0..gl.NUM_SHOOTS) |i| {
-        shoot[i].rec.x = player.rec.x;
-        shoot[i].rec.y = player.rec.y + player.rec.height / 4;
-        shoot[i].rec.width = 10;
-        shoot[i].rec.height = 5;
-        shoot[i].speed.x = 7;
-        shoot[i].speed.y = 0;
-        shoot[i].active = false;
-        shoot[i].color = r.MAROON;
+        weapon[i].rec.x = player.rec.x;
+        weapon[i].rec.y = player.rec.y + player.rec.height / 4;
+        weapon[i].rec.width = 10;
+        weapon[i].rec.height = 8;
+        weapon[i].speed.x = 7;
+        weapon[i].speed.y = 0;
+        weapon[i].active = false;
+        weapon[i].color = r.DARKBLUE;
     }
 }
 
@@ -234,10 +234,10 @@ pub fn Update() void {
             shootRate += 2;
 
             for (0..gl.NUM_SHOOTS) |i| {
-                if (!shoot[i].active and @mod(shootRate, 20) == 0) {
-                    shoot[i].rec.x = player.rec.x;
-                    shoot[i].rec.y = player.rec.y + player.rec.height / 4;
-                    shoot[i].active = true;
+                if (!weapon[i].active and @mod(shootRate, 20) == 0) {
+                    weapon[i].rec.x = player.rec.x;
+                    weapon[i].rec.y = player.rec.y + player.rec.height / 4;
+                    weapon[i].active = true;
                     break;
                 }
             }
@@ -245,15 +245,15 @@ pub fn Update() void {
 
             // Shoot logic
             for (0..gl.NUM_SHOOTS) |i| {
-                if (shoot[i].active) {
+                if (weapon[i].active) {
                     // Movement
-                    shoot[i].rec.x += shoot[i].speed.x;
+                    weapon[i].rec.x += weapon[i].speed.x;
 
                     // Collision with enemy
                     for (0..@as(usize, @intCast(activeEnemies))) |j| {
                         if (enemy[j].active) {
-                            if (r.CheckCollisionRecs(shoot[i].rec, enemy[j].rec)) {
-                                shoot[i].active = false;
+                            if (r.CheckCollisionRecs(weapon[i].rec, enemy[j].rec)) {
+                                weapon[i].active = false;
                                 enemy[j].rec.x = @as(f32, @floatFromInt(r.GetRandomValue(gl.SCR_WIDTH, gl.SCR_WIDTH + 1000)));
                                 enemy[j].rec.y = @as(f32, @floatFromInt(r.GetRandomValue(0, gl.SCR_HEIGHT - @as(c_int, @intFromFloat(enemy[j].rec.height)))));
                                 shootRate = 0;
@@ -261,8 +261,8 @@ pub fn Update() void {
                                 score += 100;
                             }
 
-                            if (shoot[i].rec.x + shoot[i].rec.width >= gl.SCR_WIDTH) {
-                                shoot[i].active = false;
+                            if (weapon[i].rec.x + weapon[i].rec.width >= gl.SCR_WIDTH) {
+                                weapon[i].active = false;
                                 shootRate = 0;
                             }
                         }
@@ -298,10 +298,10 @@ pub fn Draw() void {
         }
 
         for (0..gl.NUM_SHOOTS) |i| {
-            if (shoot[i].active) r.DrawRectangleRec(shoot[i].rec, shoot[i].color);
+            if (weapon[i].active) r.DrawRectangleRec(weapon[i].rec, weapon[i].color);
         }
 
-        r.DrawText(r.TextFormat("%04i", score), 20, 20, 40, r.GRAY);
+        r.DrawText(r.TextFormat("%04i", score), 20, 20, 40, r.MAROON);
 
         if (win) r.DrawText("YOU WIN", gl.SCR_WIDTH / 2 - @divExact(r.MeasureText("YOU WIN", 40), 2), gl.SCR_HEIGHT / 2 - 40, 40, r.BLACK);
 
