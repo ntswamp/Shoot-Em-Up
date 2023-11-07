@@ -60,7 +60,7 @@ pub fn Draw() void {
         .x = 230,
         .y = 340,
     };
-    if (framesCounter > 180 and @mod(@divTrunc(framesCounter, 40), 2) == 1) r.DrawTextEx(gl.Font, "PRESS ENTER to START LIGHTING", v2, @floatFromInt(gl.Font.baseSize), -2, r.WHITE);
+    if (framesCounter > 180 and @mod(@divTrunc(framesCounter, 40), 2) == 1) r.DrawTextEx(gl.Font, "HIT SPACE TO SHOOT 'EM ALL UP", v2, @floatFromInt(gl.Font.baseSize), -2, r.WHITE);
 }
 
 // Title Screen Unload logic

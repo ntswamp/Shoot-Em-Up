@@ -230,18 +230,18 @@ pub fn Update() void {
             if (player.rec.y + player.rec.height >= gl.SCR_HEIGHT) player.rec.y = gl.SCR_HEIGHT - player.rec.height;
 
             // Shoot initialization
-            if (r.IsKeyDown(r.KEY_SPACE)) {
-                shootRate += 5;
+            //if (r.IsKeyDown(r.KEY_SPACE)) {   //autoshoot
+            shootRate += 2;
 
-                for (0..gl.NUM_SHOOTS) |i| {
-                    if (!shoot[i].active and @mod(shootRate, 20) == 0) {
-                        shoot[i].rec.x = player.rec.x;
-                        shoot[i].rec.y = player.rec.y + player.rec.height / 4;
-                        shoot[i].active = true;
-                        break;
-                    }
+            for (0..gl.NUM_SHOOTS) |i| {
+                if (!shoot[i].active and @mod(shootRate, 20) == 0) {
+                    shoot[i].rec.x = player.rec.x;
+                    shoot[i].rec.y = player.rec.y + player.rec.height / 4;
+                    shoot[i].active = true;
+                    break;
                 }
             }
+            //}
 
             // Shoot logic
             for (0..gl.NUM_SHOOTS) |i| {
