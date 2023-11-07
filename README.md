@@ -1,2 +1,2 @@
-# Shoot-Em-Up
-Simple demo of Shoot 'Em Up with Raylib in Zig programming language
+# shoot-em-up
+A simple demo showing the ease of utilizing Zig's seamless C-interop with Raylib for video game development.
