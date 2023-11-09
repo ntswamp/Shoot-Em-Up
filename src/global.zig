@@ -5,96 +5,85 @@ const gameplay = @import("gameplay.zig");
 pub const SCR_WIDTH: c_int = 1280;
 pub const SCR_HEIGHT: c_int = 720;
 pub const TARGET_FPS = 60;
-
-pub const GameScreen = enum(c_int) {
+pub const Scene = enum(c_int) {
     TITLE = 1,
     GAMEPLAY = 2,
 };
-
-//----------------------------------------------------------------------------------
-// GAMEPLAY
-//----------------------------------------------------------------------------------
 pub const NUM_SHOOTS = 50;
 pub const ENEMIES_CAP = 50;
 pub const WAVE_I = 10;
 pub const WAVE_II = 20;
 pub const WAVE_III = 50;
-//----------------------------------------------------------------------------------
-// Shared Variables Definition (global)
-//----------------------------------------------------------------------------------
+
 pub var LightsMapWidth: c_int = 0;
 pub var LightsMapHeight: c_int = 0;
 pub var LightsMap: [*]r.Color = undefined;
-
 pub var Font: r.Font = undefined;
 pub var Music: r.Music = undefined;
+pub var CurrentScene = Scene.TITLE;
+pub var IsOnTransition = false;
 
-// Screen
-pub var CurrentScreen = GameScreen.TITLE;
-pub var OnTransition = false;
 var transAlpha: f32 = 0;
-var transFadeOut = false;
-var transFromScreen: c_int = -1;
-var transToScreen: c_int = -1;
+var isTransFadeOut = false;
+var transFromScene: c_int = -1;
+var transToScene: c_int = -1;
 
-// Request transition to next screen
-pub fn TransitionToScreen(screen: c_int) void {
-    OnTransition = true;
-    transFromScreen = @intFromEnum(CurrentScreen);
-    transToScreen = screen;
+// Request transition to next scene
+pub fn TransitionToScene(scene: c_int) void {
+    IsOnTransition = true;
+    transFromScene = @intFromEnum(CurrentScene);
+    transToScene = scene;
 }
 
-pub fn ChangeToScreen(screen: c_int) void {
-    switch (CurrentScreen) {
-        GameScreen.TITLE => title.Unload(),
-        GameScreen.GAMEPLAY => gameplay.Unload(),
+pub fn ChangeToScene(scene: c_int) void {
+    switch (CurrentScene) {
+        Scene.TITLE => title.Unload(),
+        Scene.GAMEPLAY => gameplay.Unload(),
     }
 
-    switch (screen) {
-        @intFromEnum(GameScreen.TITLE) => title.Init(),
-        @intFromEnum(GameScreen.GAMEPLAY) => gameplay.Init(),
+    switch (scene) {
+        @intFromEnum(Scene.TITLE) => title.Init(),
+        @intFromEnum(Scene.GAMEPLAY) => gameplay.Init(),
         else => {
             unreachable;
         },
     }
 
-    CurrentScreen = @enumFromInt(screen);
+    CurrentScene = @enumFromInt(scene);
 }
 
 pub fn UpdateTransition() void {
-    if (!transFadeOut) {
+    if (!isTransFadeOut) {
         transAlpha += 0.05;
 
         if (transAlpha >= 1.0) {
             transAlpha = 1.0;
-
-            switch (transFromScreen) {
-                @intFromEnum(GameScreen.TITLE) => {
+            switch (transFromScene) {
+                @intFromEnum(Scene.TITLE) => {
                     title.Unload();
                 },
-                @intFromEnum(GameScreen.GAMEPLAY) => {
-                    //UnloadGameplayScreen();
+                @intFromEnum(Scene.GAMEPLAY) => {
+                    gameplay.Unload();
                 },
                 else => {
                     unreachable;
                 },
             }
 
-            switch (transToScreen) {
-                @intFromEnum(GameScreen.TITLE) => {
+            switch (transToScene) {
+                @intFromEnum(Scene.TITLE) => {
                     title.Init();
-                    CurrentScreen = GameScreen.TITLE;
+                    CurrentScene = Scene.TITLE;
                 },
-                @intFromEnum(GameScreen.GAMEPLAY) => {
+                @intFromEnum(Scene.GAMEPLAY) => {
                     gameplay.Init();
-                    CurrentScreen = GameScreen.GAMEPLAY;
+                    CurrentScene = Scene.GAMEPLAY;
                 },
                 else => {
                     unreachable;
                 },
             }
-
-            transFadeOut = true;
+            isTransFadeOut = true;
         }
     } else // Transition fade out logic
     {
@@ -102,10 +91,10 @@ pub fn UpdateTransition() void {
 
         if (transAlpha <= 0) {
             transAlpha = 0;
-            transFadeOut = false;
-            OnTransition = false;
-            transFromScreen = -1;
-            transToScreen = -1;
+            isTransFadeOut = false;
+            IsOnTransition = false;
+            transFromScene = -1;
+            transToScene = -1;
         }
     }
 }
