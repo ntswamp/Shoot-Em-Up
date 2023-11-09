@@ -49,15 +49,14 @@ pub fn Draw() void {
     );
 
     r.DrawTexture(background, @divTrunc(r.GetScreenWidth(), 2) - @divTrunc(background.width, 2), 0, r.WHITE);
-    r.DrawTexture(title, @divTrunc(r.GetScreenWidth(), 2) - @divTrunc(title.width, 2), 30, r.Fade(r.WHITE, titleAlpha));
+    r.DrawTexture(title, @divTrunc(r.GetScreenWidth(), 2) - @divTrunc(title.width, 2), 400, r.Fade(r.WHITE, titleAlpha));
 
-    r.DrawText("(c) Developed by Dexter Han", 20, r.GetScreenHeight() - 40, 20, r.LIGHTGRAY);
+    r.DrawText("(c) coded by ntswamp", 20, r.GetScreenHeight() - 40, 20, r.LIGHTGRAY);
 
-    const v2 = r.Vector2{
-        .x = 230,
+    if (frameCounter > 180 and @mod(@divTrunc(frameCounter, 40), 2) == 1) r.DrawTextEx(gl.Font, "HIT SPACE TO SHOOT 'EM UP", r.Vector2{
+        .x = 290,
         .y = 340,
-    };
-    if (frameCounter > 180 and @mod(@divTrunc(frameCounter, 40), 2) == 1) r.DrawTextEx(gl.Font, "HIT SPACE TO SHOOT 'EM UP", v2, @floatFromInt(gl.Font.baseSize), -2, r.WHITE);
+    }, @floatFromInt(gl.Font.baseSize), -2, r.WHITE);
 }
 
 // Title Screen Unload logic
